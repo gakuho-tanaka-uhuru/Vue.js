@@ -4,11 +4,12 @@
 </head>
 <body>
   <div id="app">
-    <h1> {{ count }} </h1>
-    <button v-on: click="count -=1"> - </button>
-    <button v-on: click="count +=2"> + </button>
+    <h1>{{ count }}</h1>
+    <button v-on:click="count-=1">-</button>
+    <button v-on:click="count+=2">+</button>
   </div>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <script src="https://eugenkiss.github.io/7guis/tasks/#counter"></script>
 
   <script>
     const app =Vue.createApp({
