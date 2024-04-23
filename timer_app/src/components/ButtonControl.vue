@@ -7,14 +7,13 @@
   </div>
 </template>
 
-<script setup>
-import { defineProps, defineEmits } from 'vue';
+<script setup lang="ts">
 
-defineProps({
-  isSetDisabled: Boolean,
-  isStartDisabled: Boolean,
-  isStopDisabled: Boolean
-});
+const props = defineProps<{
+  isSetDisabled: boolean,
+  isStartDisabled: boolean,
+  isStopDisabled: boolean
+}>();
 
 const emit = defineEmits(['setTime', 'startTimer', 'stopTimer', 'resetTimer']);
 

@@ -1,71 +1,75 @@
-
 <template>
-<div id="app">
-    <div>
-      <label for="timeInput">カウントダウン時間（分）:</label>
-      <input id="timeInput" type="number" v-model="inputMinutes" step="1" min="0"/>
+  <div id="app">
+      <div>
+        <label for="timeInput">カウントダウン時間（分）:</label>
+        <input id="timeInput" type="number" v-model="inputMinutes" step="1" min="0"/>
+      </div>
+      <div class="timer">{{ formatTime }}</div>
+      <ButtonControl
+        :isSetDisabled="timerId"
+        :isStartDisabled="timerId || !timeSet"
+        :isStopDisabled="timerId === null"
+        @setTime="setTime"
+        @startTimer="startTimer"
+        @stopTimer="stopTimer"
+        @resetTimer="resetTimer"
+      />
     </div>
-    <div class="timer">{{ formatTime }}</div>
-    <ButtonControl
-      :isSetDisabled="timerId !== null"
-      :isStartDisabled="timerId !== null || !timeSet"
-      :isStopDisabled="timerId === null"
-      @setTime="setTime"
-      @startTimer="startTimer"
-      @stopTimer="stopTimer"
-      @resetTimer="resetTimer"
-    />
-  </div>
-</template>
+  </template>
+  
+  <script setup lang="ts">
 
-<script setup>
-import { ref, computed } from 'vue';
-import ButtonControl from './components/ButtonControl.vue';
-
-const inputMinutes = ref(0);
-const time = ref(0);
-let timerId = ref(null);
-const timeSet = ref(false);
-const startingTime = ref(0);
-
-const formatTime = computed(()  => {
-  const minutes = Math.floor(time.value / 60);
-  const seconds = ((time.value / 60) %1) * 60;
-  return `${minutes}:${seconds.toFixed(0).padStart(2, '0')}`;
-});
-
-function setTime() {
-  time.value = inputMinutes.value * 60;
-  timeSet.value = true;
-}
-
-function startTimer() {
-  timerId.value = setInterval(() => {
-    if (time.value > 0) {
-      time.value -= 1;
-    }
-    if (time.value === 0) {
-        setTimeout(() => {
-          alert("時間になりました!");
-        }, 10); 
-        resetTimer();
+  import { ref, computed } from 'vue';
+  import ButtonControl from './components/ButtonControl.vue';
+  
+  const inputMinutes = ref(0);
+  const startingTime = ref(0);
+  const time = ref(0);
+  const timerId = ref<number | null>(null);
+  const timeSet = ref(false);
+  
+  const formatTime = computed(()  => {
+    const minutes = Math.floor(time.value / 60);
+    const seconds = ((time.value / 60) %1) * 60;
+    return `${minutes}:${seconds.toFixed(0).padStart(2, '0')}`;
+  });
+  
+  function setTime() {
+    time.value = inputMinutes.value * 60;
+    timeSet.value = true;
+  }
+  
+  function startTimer() {
+    timerId.value = setInterval(() => {
+      if (time.value > 0) {
+        time.value -= 1;
+      if (time.value === 0) {
+          setTimeout(() => {
+            alert("時間になりました!");
+          }, 10); 
+          resetTimer();
+        }
       }
-  }, 1000);
-}
-
-function stopTimer() {
-  clearInterval(timerId.value);
-  timerId.value = null;
-}
-
-function resetTimer() {
-  clearInterval(timerId.value);
-  timerId.value = null;
-  time.value = startingTime.value;
-}
-
-</script>
-
+    }, 1000)as unknown as number;
+  }
+  
+  function stopTimer() {
+    if (timerId.value !== null) {
+    clearInterval(timerId.value);
+    timerId.value = null;
+    }
+  }
+  
+  function resetTimer() {
+    if (timerId.value !== null) {
+    clearInterval(timerId.value);
+    timerId.value = null;
+    }
+    time.value = startingTime.value;
+  }
+  
+  </script>
+  
 <style>
 html, body {
   margin: 0;
