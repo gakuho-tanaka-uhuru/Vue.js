@@ -4,20 +4,18 @@
 </head>
 <body>
   <div id="app">
-    <h1> {{ count }} </h1>
-    <button v-on: click="count -=1"> - </button>
-    <button v-on: click="count +=2"> + </button>
-  </div>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    {{ message }}
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-  <script>
-    const app =Vue.createApp({
-      data() {
-        return {
-          count : 0
-        };
-      }
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'Hello World!'
+            };
+        }
     });
     app.mount('#app');
-  </script>
+</script>
 </body>
