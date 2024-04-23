@@ -6,9 +6,12 @@
       <input id="timeInput" type="number" v-model="inputMinutes" step="1" min="0"/>
     </div>
     <div class="timer">{{ formatTime }}</div>
-    <button @click="setTime">セット</button>
-    <button @click="startTimer">スタート</button>
-    <button @click="stopTimer">ストップ</button>
+    <div class="controls">
+   <button @click="setTime" :disabled="timerId !== null">セット</button>
+    <button @click="startTimer" :disabled="timerId !== null || !timeSet">スタート</button>
+    <button @click="stopTimer" :disabled="timerId === null">ストップ</button>
+    <button @click="resetTimer">リセット</button>
+  </div>
   </div>
 </template>
 
@@ -18,6 +21,8 @@ import { ref, computed } from 'vue';
 const inputMinutes = ref(0);
 const time = ref(0);
 let timerId = ref(null);
+const timeSet = ref(false);
+const startingTime = ref(0);
 
 const formatTime = computed(()  => {
   const minutes = Math.floor(time.value / 60);
@@ -27,6 +32,7 @@ const formatTime = computed(()  => {
 
 function setTime() {
   time.value = inputMinutes.value * 60;
+  timeSet.value = true;
 }
 
 function startTimer() {
@@ -34,6 +40,12 @@ function startTimer() {
     if (time.value > 0) {
       time.value -= 1;
     }
+    if (time.value === 0) {
+        setTimeout(() => {
+          alert("時間になりました!");
+        }, 10); 
+        resetTimer();
+      }
   }, 1000);
 }
 
@@ -41,6 +53,13 @@ function stopTimer() {
   clearInterval(timerId.value);
   timerId.value = null;
 }
+
+function resetTimer() {
+  clearInterval(timerId.value);
+  timerId.value = null;
+  time.value = startingTime.value;
+}
+
 </script>
 
 <style>
