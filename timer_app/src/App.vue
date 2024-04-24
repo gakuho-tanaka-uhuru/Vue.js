@@ -6,8 +6,8 @@
       </div>
       <div class="timer">{{ formatTime }}</div>
       <ButtonControl
-        :isSetDisabled="timerId"
-        :isStartDisabled="timerId || !timeSet"
+        :isSetDisabled="timerId !== null"
+        :isStartDisabled="timerId !== null|| !timeSet"
         :isStopDisabled="timerId === null"
         @setTime="setTime"
         @startTimer="startTimer"
@@ -19,7 +19,7 @@
   
   <script setup lang="ts">
 
-  import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue'
   import ButtonControl from './components/ButtonControl.vue';
   
   const inputMinutes = ref(0);
@@ -43,6 +43,8 @@
     timerId.value = setInterval(() => {
       if (time.value > 0) {
         time.value -= 1;
+        localStorage.setItem('savedTime', time.value);  // 追記
+       localStorage.setItem('savedTimestamp', Date.now());  // 追記 
       if (time.value === 0) {
           setTimeout(() => {
             alert("時間になりました!");
@@ -68,6 +70,22 @@
     time.value = startingTime.value;
   }
   
+  onMounted(() => {
+  const savedTime = localStorage.getItem('savedTime');
+  const savedTimestamp = localStorage.getItem('savedTimestamp');
+  // const timerRunning = localStorage.getItem('timerRunning') === 'true';
+  if (savedTime !== null && savedTimestamp !== null) {
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - Number(savedTimestamp)) / 1000);
+      let calculatedTime = Number(savedTime) - elapsedSeconds;
+      if (calculatedTime > 0  ) {
+        time.value = calculatedTime;
+        timeSet.value = false;
+        startTimer();
+      }
+  }
+});
+
   </script>
   
 <style>
